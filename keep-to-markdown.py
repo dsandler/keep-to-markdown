@@ -140,7 +140,8 @@ def read_write_notes(args):
 
             # create Markdown file
             print(f'Convert "{title}" to markdown file.')
-            with open(f'{notespath}{filename}.md', 'w', encoding='utf-8') as mdfile:
+            mdfilepath = f'{notespath}{filename}.md'
+            with open(mdfilepath, 'w', encoding='utf-8') as mdfile:
                 mdfile.write(f'---\n')
                 mdfile.write(f'title: {title}\n')
                 if (title != iso_datetime):
@@ -173,6 +174,11 @@ def read_write_notes(args):
                     mdfile.write(f'{attachments}')
                 except KeyError:
                     print('No attachments available.')
+
+            filestat = os.stat(mdfilepath)
+            times = (filestat.st_atime, timestamp / 1_000_000.)
+            print(f'Setting {mdfilepath} utimes to {times}')
+            os.utime(mdfilepath, times=times)
 
 def create_folder():
     try:
